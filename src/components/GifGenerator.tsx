@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, Loader2, Check, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { AnimationType } from "./AnimationGrid";
 import { useToast } from "@/hooks/use-toast";
 
 // @ts-ignore
-import GIF from "gif.js/dist/gif.js";
+import gifshot from "gifshot";
 
 interface GifGeneratorProps {
   images: string[];
@@ -61,46 +61,38 @@ export const GifGenerator = ({ images, settings, animation }: GifGeneratorProps)
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
-
-      // Use a consistent frame rate for professional results
-      const fps = 30; 
-      const frameDelay = 1000 / fps;
       
-      // Calculate frames based on user settings
+      // ENSURE HIGHEST QUALITY RENDERING
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      const fps = 24; // Standard cinematic FPS for GIFs
       const tFramesCount = Math.max(1, Math.round(fps * settings.duration));
       const pFramesCount = Math.max(1, Math.round(fps * settings.pauseDuration));
 
-      const gif = new GIF({
-        workers: 4,
-        quality: 1, // BEST QUALITY (lowest value = highest clarity)
-        width,
-        height,
-        workerScript: "/gif.worker.js",
-        dither: "FloydSteinberg", // Best for gradients
-      });
-
+      const frames: string[] = [];
       const sequence = [...loadedImages];
-      const totalCaptureCycles = sequence.length;
 
-      for (let i = 0; i < totalCaptureCycles; i++) {
+      const totalCaptureFrames = sequence.length * (pFramesCount + tFramesCount);
+
+      for (let i = 0; i < sequence.length; i++) {
         const current = sequence[i];
-        const next = sequence[(i + 1) % totalCaptureCycles];
+        const next = sequence[(i + 1) % sequence.length];
 
-        // 1. Static Phase (Pause)
+        // Pause Phase
         for (let f = 0; f < pFramesCount; f++) {
           ctx.clearRect(0, 0, width, height);
           ctx.drawImage(current, 0, 0, width, height);
-          gif.addFrame(ctx, { copy: true, delay: frameDelay });
-          
-          // Progress feedback for capture (0-50%)
-          setProgress(Math.round(((i * (pFramesCount + tFramesCount) + f) / (totalCaptureCycles * (pFramesCount + tFramesCount))) * 50));
+          // USE UNCOMPRESSED PNG FOR INTERMEDIATE FRAMES TO AVOID BLUR/ARTIFACTS
+          frames.push(canvas.toDataURL("image/png")); 
+          setProgress(Math.round((frames.length / totalCaptureFrames) * 40));
         }
 
-        // 2. Transition Phase (Simultaneous/Overlapped)
+        // Transition Phase
         for (let f = 0; f < tFramesCount; f++) {
           const t = f / tFramesCount;
-          // Smooth ease-out for a professional feel
-          const ease = 1 - Math.pow(1 - t, 3); 
+          // Smooth Step Easing
+          const ease = t * t * (3 - 2 * t);
 
           ctx.clearRect(0, 0, width, height);
           ctx.save();
@@ -110,14 +102,14 @@ export const GifGenerator = ({ images, settings, animation }: GifGeneratorProps)
             ctx.drawImage(next, width - (ease * width), 0, width, height);
           } else if (animation === 'zoom') {
             ctx.globalAlpha = 1 - ease;
-            const s1 = 1 + ease * 0.2;
+            const s1 = 1 + ease * 0.15;
             ctx.translate(width/2, height/2);
             ctx.scale(s1, s1);
             ctx.drawImage(current, -width/2, -height/2, width, height);
             ctx.setTransform(1, 0, 0, 1, 0, 0);
 
             ctx.globalAlpha = ease;
-            const s2 = 0.9 + ease * 0.1;
+            const s2 = 0.85 + ease * 0.15;
             ctx.translate(width/2, height/2);
             ctx.scale(s2, s2);
             ctx.drawImage(next, -width/2, -height/2, width, height);
@@ -130,14 +122,7 @@ export const GifGenerator = ({ images, settings, animation }: GifGeneratorProps)
               ctx.scale((ease - 0.5) * 2, 1);
               ctx.drawImage(next, -width/2, 0, width, height);
             }
-          } else if (animation === 'wipe') {
-            ctx.drawImage(current, 0, 0, width, height);
-            ctx.beginPath();
-            ctx.rect(width - (ease * width), 0, width, height);
-            ctx.clip();
-            ctx.drawImage(next, 0, 0, width, height);
           } else {
-            // High Fidelity Fade
             ctx.globalAlpha = 1 - ease;
             ctx.drawImage(current, 0, 0, width, height);
             ctx.globalAlpha = ease;
@@ -145,45 +130,44 @@ export const GifGenerator = ({ images, settings, animation }: GifGeneratorProps)
           }
           
           ctx.restore();
-          gif.addFrame(ctx, { copy: true, delay: frameDelay });
-          
-          setProgress(Math.round(((i * (pFramesCount + tFramesCount) + pFramesCount + f) / (totalCaptureCycles * (pFramesCount + tFramesCount))) * 50));
+          frames.push(canvas.toDataURL("image/png"));
+          setProgress(Math.round((frames.length / totalCaptureFrames) * 40));
         }
       }
 
-      // Handle seamless loop (Reverse/Ping-Pong logic handled by GIF repeat by default, but we can double frames if needed)
-      // settings.reverseMode logic can go here if the user wants true ping-pong
-
-      return new Promise((resolve, reject) => {
-        gif.on("finished", (blob: Blob) => {
-          const url = URL.createObjectURL(blob);
-          setProgress(100);
-          setGifUrl(url);
-          setSuccess(true);
-          handleDownload(url);
-          toast({ title: "High-Quality GIF Ready! 🔥", description: "Exported with 256-bit color precision." });
-          resolve(url);
-        });
-
-        gif.on("progress", (p: number) => {
-          // Progress feedback for rendering (50-100%)
-          setProgress(50 + Math.round(p * 50));
-        });
-
-        gif.on("error", (e: any) => {
-          console.error("GIF Render Error:", e);
-          reject(e);
-        });
-
-        gif.render();
-      }).finally(() => {
-        setIsGenerating(false);
-      });
+      // Final Assembly with MAX QUALITY
+      gifshot.createGIF(
+        {
+          images: frames,
+          gifWidth: width,
+          gifHeight: height,
+          interval: 1 / fps,
+          numFrames: frames.length,
+          sampleInterval: 1, // BEST COLOR QUALITY (1 = pixel perfect sampling)
+          numWorkers: 2,
+          fontWeight: 'normal',
+          filter: '',
+        },
+        (obj: any) => {
+          if (!obj.error) {
+            const url = obj.image;
+            setProgress(100);
+            setGifUrl(url);
+            setSuccess(true);
+            handleDownload(url);
+            toast({ title: "Crystal Clear!", description: "GIF generated with high fidelity." });
+          } else {
+            console.error(obj.errorMsg);
+            toast({ title: "Error", description: "Fidelity loss during export.", variant: "destructive" });
+          }
+          setIsGenerating(false);
+        }
+      );
 
     } catch (e) {
       console.error(e);
       setIsGenerating(false);
-      toast({ title: "Error", description: "Failed to generate quality GIF.", variant: "destructive" });
+      toast({ title: "Error", description: "Generation failed.", variant: "destructive" });
     }
   };
 
@@ -194,14 +178,14 @@ export const GifGenerator = ({ images, settings, animation }: GifGeneratorProps)
           <motion.div key="gen" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Button
               size="lg"
-              className="w-full h-12 rounded-xl font-bold bg-primary text-primary-foreground shadow-2xl hover:scale-[1.01] active:scale-[0.98] transition-all"
+              className="w-full h-12 rounded-xl font-bold bg-primary text-primary-foreground shadow-lg hover:scale-[1.01] active:scale-[0.98] transition-all"
               onClick={generate}
               disabled={isGenerating || images.length < 2}
             >
               {isGenerating ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  HQ Encoding... {progress}%
+                  Building HQ... {progress}%
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
@@ -216,11 +200,11 @@ export const GifGenerator = ({ images, settings, animation }: GifGeneratorProps)
             <Button
               variant="outline"
               size="lg"
-              className="flex-1 h-12 rounded-xl font-bold border-primary text-primary hover:bg-primary/5 shadow-sm"
+              className="flex-1 h-12 rounded-xl font-bold border-primary text-primary hover:bg-primary/5 shadow-premium"
               onClick={() => handleDownload(gifUrl!)}
             >
               <Check className="w-5 h-5 mr-2" />
-              Download Ready
+              Download Ready!
             </Button>
             <Button
               variant="outline"
@@ -239,9 +223,9 @@ export const GifGenerator = ({ images, settings, animation }: GifGeneratorProps)
 
       {isGenerating && (
         <div className="space-y-2">
-          <Progress value={progress} className="h-1.5" />
-          <p className="text-[10px] text-center text-muted-foreground font-black tracking-widest uppercase">
-            {progress < 50 ? "Capturing 1:1 Preview" : "Applying Floyd-Steinberg Dithering"}
+          <Progress value={progress} className="h-1.5 bg-muted" />
+          <p className="text-[9px] text-center text-muted-foreground font-black tracking-[0.2em] uppercase">
+            {progress < 40 ? "Retaining Original Clarity" : "Finalizing Fidelity"}
           </p>
         </div>
       )}
