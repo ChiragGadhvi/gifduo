@@ -94,7 +94,7 @@ export const ImageUploader = ({
   }, [images, onImagesChange]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <AnimatePresence mode="wait">
         {images.length < maxImages && (
           <motion.div
@@ -102,10 +102,10 @@ export const ImageUploader = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             className={cn(
-              "relative border border-dashed rounded-xl p-10 transition-all duration-300 cursor-pointer",
+              "relative border border-dashed rounded-xl p-6 transition-all duration-300 cursor-pointer overflow-hidden",
               isDragging
-                ? "border-foreground bg-secondary/50"
-                : "border-border hover:border-foreground/50 hover:bg-secondary/30"
+                ? "border-primary bg-primary/5 shadow-inner"
+                : "border-border hover:border-primary/50 hover:bg-muted/50"
             )}
             onDragEnter={handleDragIn}
             onDragLeave={handleDragOut}
@@ -119,21 +119,21 @@ export const ImageUploader = ({
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               onChange={handleFileSelect}
             />
-            <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex flex-col items-center gap-2 text-center">
               <motion.div 
-                className="w-14 h-14 rounded-xl bg-secondary border border-border flex items-center justify-center"
+                className="w-10 h-10 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center"
                 whileHover={{ scale: 1.05 }}
               >
-                <Upload className="w-6 h-6 text-foreground" />
+                <Upload className="w-5 h-5 text-primary" />
               </motion.div>
               <div>
-                <p className="text-base font-display font-semibold text-foreground">
+                <p className="text-sm font-display font-bold text-foreground">
                   {images.length === 0
-                    ? "Drop your images here"
-                    : `Add ${maxImages - images.length} more image${maxImages - images.length > 1 ? "s" : ""}`}
+                    ? "Upload photos"
+                    : `Add ${maxImages - images.length} more`}
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  JPG, PNG, WEBP • Max 10MB each
+                <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider font-bold">
+                  JPG, PNG, WEBP • Max 10MB
                 </p>
               </div>
             </div>

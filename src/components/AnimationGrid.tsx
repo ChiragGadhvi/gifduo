@@ -53,7 +53,7 @@ interface AnimationGridProps {
 
 export const AnimationGrid = ({ selected, onSelect }: AnimationGridProps) => {
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
       {animations.map((animation, index) => {
         const Icon = animation.icon;
         const isSelected = selected === animation.id;
@@ -61,38 +61,38 @@ export const AnimationGrid = ({ selected, onSelect }: AnimationGridProps) => {
         return (
           <motion.button
             key={animation.id}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.03 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onSelect(animation.id)}
             className={cn(
-              "relative flex flex-col items-center gap-2 p-3 rounded-lg border transition-all duration-200",
+              "relative flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all duration-300",
               isSelected
-                ? "border-foreground bg-secondary"
-                : "border-border hover:border-foreground/50 hover:bg-secondary/50"
+                ? "border-primary bg-primary/10 shadow-sm"
+                : "border-border hover:border-primary/50 hover:bg-primary/5"
             )}
           >
             {animation.popular && (
-              <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 rounded text-[9px] font-semibold bg-foreground text-background">
-                ★
+              <span className="absolute -top-1 -right-1 px-1 py-0.5 rounded-full text-[7px] font-bold bg-primary text-primary-foreground shadow-sm">
+                POP
               </span>
             )}
             <div
               className={cn(
-                "w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
-                isSelected ? "bg-foreground" : "bg-secondary"
+                "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300",
+                isSelected ? "bg-primary text-primary-foreground shadow-md" : "bg-foreground/5 text-foreground/60"
               )}
             >
-              <Icon
-                className={cn(
-                  "w-4 h-4",
-                  isSelected ? "text-background" : "text-foreground"
-                )}
-              />
+              <Icon className="w-4 h-4" />
             </div>
-            <span className="text-[11px] font-medium font-display">{animation.name}</span>
+            <span className={cn(
+              "text-[9px] font-bold font-display tracking-tight uppercase truncate w-full text-center",
+              isSelected ? "text-primary" : "text-muted-foreground"
+            )}>
+              {animation.name}
+            </span>
           </motion.button>
         );
       })}

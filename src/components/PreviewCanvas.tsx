@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, RotateCcw, Sun, Moon } from "lucide-react";
+import { Play, Pause, RotateCcw, Sun, Moon, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimationType } from "./AnimationGrid";
 import { GifSettings } from "./SettingsPanel";
@@ -135,14 +135,17 @@ export const PreviewCanvas = ({
       <div className="flex items-center justify-center h-full">
         <div
           className={cn(
-            "rounded-lg border border-dashed border-border flex items-center justify-center",
-            lightBg ? "bg-foreground/5" : "bg-secondary/50"
+            "rounded-2xl border border-dashed border-border flex items-center justify-center transition-colors duration-300",
+            lightBg ? "bg-black/5" : "bg-muted"
           )}
           style={{ width: Math.min(width, 350), height: Math.min(height, 350) }}
         >
-          <p className="text-muted-foreground text-sm text-center px-8">
-            Upload 2 images to see the preview
-          </p>
+          <div className="text-center px-8">
+            <ImageIcon className="w-8 h-8 mx-auto mb-3 text-muted-foreground/30" />
+            <p className="text-muted-foreground text-sm font-medium">
+              Upload 2 images to <br /> see the preview
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -152,8 +155,8 @@ export const PreviewCanvas = ({
     <div className="flex flex-col items-center gap-5">
       <div
         className={cn(
-          "relative rounded-lg overflow-hidden border border-border transition-colors duration-300",
-          lightBg ? "bg-white" : "bg-secondary"
+          "relative rounded-2xl overflow-hidden border border-border shadow-xl transition-colors duration-300",
+          lightBg ? "bg-white" : "bg-black"
         )}
         style={{ width: Math.min(width, 350), height: Math.min(height, 350) }}
       >
@@ -167,24 +170,9 @@ export const PreviewCanvas = ({
             initial={variants.initial}
             animate={variants.animate}
             exit={variants.exit}
-            transition={{ duration: settings.duration }}
+            transition={{ duration: settings.duration, ease: "easeInOut" }}
           />
         </AnimatePresence>
-
-        {/* Image indicator */}
-        {images.length >= 2 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {images.map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "w-1.5 h-1.5 rounded-full transition-colors",
-                  i === currentIndex ? "bg-foreground" : "bg-foreground/30"
-                )}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Controls */}
