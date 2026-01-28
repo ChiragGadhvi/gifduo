@@ -160,7 +160,7 @@ export const PreviewCanvas = ({
         )}
         style={{ width: Math.min(width, 350), height: Math.min(height, 350) }}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.img
             key={currentIndex}
             src={images[currentIndex]}

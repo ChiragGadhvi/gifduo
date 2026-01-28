@@ -25,19 +25,7 @@ export const Header = () => {
         </motion.div>
       </Link>
 
-      <nav className="flex items-center gap-1 md:gap-4">
-        <Link
-          to="/create"
-          className="text-[10px] md:text-xs font-bold text-muted-foreground hover:text-foreground transition-all px-2 md:px-3 py-1.5 rounded-md hover:bg-muted uppercase tracking-widest"
-        >
-          Create
-        </Link>
-        <Link
-          to="/"
-          className="text-[10px] md:text-xs font-bold text-muted-foreground hover:text-foreground transition-all px-2 md:px-3 py-1.5 rounded-md hover:bg-muted uppercase tracking-widest"
-        >
-          Showcase
-        </Link>
+      <nav className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="icon"

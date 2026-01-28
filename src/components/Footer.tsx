@@ -15,28 +15,6 @@ export const Footer = () => {
           </span>
         </div>
 
-        <div className="flex items-center gap-6">
-          <Link
-            to="/create"
-            className="text-[9px] font-bold text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
-          >
-            Create
-          </Link>
-          <Link
-            to="/"
-            className="text-[9px] font-bold text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
-          >
-            Showcase
-          </Link>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[9px] font-bold text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
-          >
-            Github
-          </a>
-        </div>
       </div>
     </footer>
   );

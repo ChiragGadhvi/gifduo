@@ -31,9 +31,13 @@ const Index = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center gap-6"
           >
-            <div className="w-14 h-14 md:w-16 md:h-16 bg-primary/5 rounded-2xl flex items-center justify-center border border-primary/10 shadow-sm mb-2">
+            <motion.div 
+              className="w-14 h-14 md:w-16 md:h-16 bg-primary/5 rounded-2xl flex items-center justify-center border border-primary/10 shadow-sm mb-2"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
               <img src={ghostIcon} alt="GifDuo" className="w-8 h-8 md:w-10 md:h-10 opacity-80 dark:invert" />
-            </div>
+            </motion.div>
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight leading-[1.05] text-balance">
               Animate your <br className="hidden md:block" />
