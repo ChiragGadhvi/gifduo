@@ -87,7 +87,7 @@ export const PreviewCanvas = ({
 }: PreviewCanvasProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [darkBg, setDarkBg] = useState(false);
+  const [lightBg, setLightBg] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const cycleImage = useCallback(() => {
@@ -135,12 +135,12 @@ export const PreviewCanvas = ({
       <div className="flex items-center justify-center h-full">
         <div
           className={cn(
-            "rounded-2xl border-2 border-dashed border-border flex items-center justify-center",
-            darkBg ? "bg-foreground/10" : "bg-muted/50"
+            "rounded-lg border border-dashed border-border flex items-center justify-center",
+            lightBg ? "bg-foreground/5" : "bg-secondary/50"
           )}
-          style={{ width: Math.min(width, 400), height: Math.min(height, 400) }}
+          style={{ width: Math.min(width, 350), height: Math.min(height, 350) }}
         >
-          <p className="text-muted-foreground text-center px-8">
+          <p className="text-muted-foreground text-sm text-center px-8">
             Upload 2 images to see the preview
           </p>
         </div>
@@ -149,13 +149,13 @@ export const PreviewCanvas = ({
   }
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-5">
       <div
         className={cn(
-          "relative rounded-2xl overflow-hidden shadow-elevated transition-colors duration-300",
-          darkBg ? "bg-foreground" : "bg-muted"
+          "relative rounded-lg overflow-hidden border border-border transition-colors duration-300",
+          lightBg ? "bg-white" : "bg-secondary"
         )}
-        style={{ width: Math.min(width, 400), height: Math.min(height, 400) }}
+        style={{ width: Math.min(width, 350), height: Math.min(height, 350) }}
       >
         <AnimatePresence mode="wait">
           <motion.img
@@ -173,13 +173,13 @@ export const PreviewCanvas = ({
 
         {/* Image indicator */}
         {images.length >= 2 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
             {images.map((_, i) => (
               <div
                 key={i}
                 className={cn(
-                  "w-2 h-2 rounded-full transition-colors",
-                  i === currentIndex ? "bg-primary" : "bg-primary/30"
+                  "w-1.5 h-1.5 rounded-full transition-colors",
+                  i === currentIndex ? "bg-foreground" : "bg-foreground/30"
                 )}
               />
             ))}
@@ -188,12 +188,12 @@ export const PreviewCanvas = ({
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <Button
           variant="outline"
           size="icon"
           onClick={togglePlay}
-          className="rounded-full"
+          className="rounded-full w-9 h-9"
         >
           {isPlaying ? (
             <Pause className="w-4 h-4" />
@@ -205,23 +205,23 @@ export const PreviewCanvas = ({
           variant="outline"
           size="icon"
           onClick={restart}
-          className="rounded-full"
+          className="rounded-full w-9 h-9"
         >
           <RotateCcw className="w-4 h-4" />
         </Button>
         <Button
           variant="outline"
           size="icon"
-          onClick={() => setDarkBg((prev) => !prev)}
-          className="rounded-full"
+          onClick={() => setLightBg((prev) => !prev)}
+          className="rounded-full w-9 h-9"
         >
-          {darkBg ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          {lightBg ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
         </Button>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Press <kbd className="px-1 py-0.5 rounded bg-muted font-mono">Space</kbd> to play/pause,{" "}
-        <kbd className="px-1 py-0.5 rounded bg-muted font-mono">R</kbd> to restart
+      <p className="text-[11px] text-muted-foreground">
+        <kbd className="px-1.5 py-0.5 rounded bg-secondary font-mono text-[10px]">Space</kbd> play/pause · 
+        <kbd className="px-1.5 py-0.5 rounded bg-secondary font-mono text-[10px] ml-1">R</kbd> restart
       </p>
     </div>
   );

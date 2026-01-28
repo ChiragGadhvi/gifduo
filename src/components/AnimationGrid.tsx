@@ -53,7 +53,7 @@ interface AnimationGridProps {
 
 export const AnimationGrid = ({ selected, onSelect }: AnimationGridProps) => {
   return (
-    <div className="grid grid-cols-5 gap-3">
+    <div className="grid grid-cols-5 gap-2">
       {animations.map((animation, index) => {
         const Icon = animation.icon;
         const isSelected = selected === animation.id;
@@ -63,34 +63,36 @@ export const AnimationGrid = ({ selected, onSelect }: AnimationGridProps) => {
             key={animation.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
+            transition={{ delay: index * 0.03 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => onSelect(animation.id)}
             className={cn(
-              "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-200",
+              "relative flex flex-col items-center gap-2 p-3 rounded-lg border transition-all duration-200",
               isSelected
-                ? "border-primary bg-primary/10 shadow-glow"
-                : "border-border hover:border-primary/50 hover:bg-muted/50"
+                ? "border-foreground bg-secondary"
+                : "border-border hover:border-foreground/50 hover:bg-secondary/50"
             )}
           >
             {animation.popular && (
-              <span className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-[10px] font-bold gradient-bg text-primary-foreground">
-                Popular
+              <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 rounded text-[9px] font-semibold bg-foreground text-background">
+                ★
               </span>
             )}
             <div
               className={cn(
-                "w-10 h-10 rounded-lg flex items-center justify-center transition-colors",
-                isSelected ? "gradient-bg" : "bg-muted"
+                "w-9 h-9 rounded-lg flex items-center justify-center transition-colors",
+                isSelected ? "bg-foreground" : "bg-secondary"
               )}
             >
               <Icon
                 className={cn(
-                  "w-5 h-5",
-                  isSelected ? "text-primary-foreground" : "text-foreground"
+                  "w-4 h-4",
+                  isSelected ? "text-background" : "text-foreground"
                 )}
               />
             </div>
-            <span className="text-xs font-medium">{animation.name}</span>
+            <span className="text-[11px] font-medium font-display">{animation.name}</span>
           </motion.button>
         );
       })}
