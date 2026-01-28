@@ -16,7 +16,7 @@ import {
   Square,
   Palette,
   Frame,
-  Sparkles,
+  Settings2,
 } from "lucide-react";
 
 export interface GifSettings {
@@ -82,23 +82,23 @@ export const SettingsPanel = ({
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="space-y-6 p-6 bg-card rounded-2xl border shadow-card"
+      className="space-y-5 p-5 bg-card rounded-xl border border-border"
     >
-      <div className="flex items-center gap-2 pb-2 border-b">
-        <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-          <Sparkles className="w-4 h-4 text-primary-foreground" />
+      <div className="flex items-center gap-2 pb-3 border-b border-border">
+        <div className="w-7 h-7 rounded-lg bg-secondary border border-border flex items-center justify-center">
+          <Settings2 className="w-4 h-4 text-foreground" />
         </div>
-        <h3 className="font-semibold">Customize</h3>
+        <h3 className="font-display font-semibold text-sm">Settings</h3>
       </div>
 
       {/* Speed/Duration */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="flex items-center gap-2">
-            <Gauge className="w-4 h-4 text-primary" />
+          <Label className="flex items-center gap-2 text-xs">
+            <Gauge className="w-3.5 h-3.5 text-muted-foreground" />
             Animation Speed
           </Label>
-          <span className="text-sm text-muted-foreground">{settings.duration}s</span>
+          <span className="text-xs text-muted-foreground font-medium">{settings.duration}s</span>
         </div>
         <Slider
           value={[settings.duration]}
@@ -106,17 +106,18 @@ export const SettingsPanel = ({
           min={0.5}
           max={5}
           step={0.1}
+          className="py-1"
         />
       </div>
 
       {/* Pause Duration */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="flex items-center gap-2">
-            <Timer className="w-4 h-4 text-primary" />
+          <Label className="flex items-center gap-2 text-xs">
+            <Timer className="w-3.5 h-3.5 text-muted-foreground" />
             Pause Duration
           </Label>
-          <span className="text-sm text-muted-foreground">{settings.pauseDuration}s</span>
+          <span className="text-xs text-muted-foreground font-medium">{settings.pauseDuration}s</span>
         </div>
         <Slider
           value={[settings.pauseDuration]}
@@ -124,25 +125,26 @@ export const SettingsPanel = ({
           min={0.5}
           max={5}
           step={0.1}
+          className="py-1"
         />
       </div>
 
       {/* Loop Count */}
-      <div className="space-y-3">
-        <Label className="flex items-center gap-2">
-          <Repeat className="w-4 h-4 text-primary" />
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-xs">
+          <Repeat className="w-3.5 h-3.5 text-muted-foreground" />
           Loop Count
         </Label>
         <Select
           value={settings.loopCount}
           onValueChange={(v) => update("loopCount", v)}
         >
-          <SelectTrigger className="bg-background">
+          <SelectTrigger className="h-9 text-xs bg-secondary border-border">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-popover border">
+          <SelectContent className="bg-card border-border">
             {loopOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+              <SelectItem key={opt.value} value={opt.value} className="text-xs">
                 {opt.label}
               </SelectItem>
             ))}
@@ -151,9 +153,9 @@ export const SettingsPanel = ({
       </div>
 
       {/* Reverse Mode */}
-      <div className="flex items-center justify-between">
-        <Label className="flex items-center gap-2">
-          <Repeat className="w-4 h-4 text-primary" />
+      <div className="flex items-center justify-between py-1">
+        <Label className="flex items-center gap-2 text-xs">
+          <Repeat className="w-3.5 h-3.5 text-muted-foreground" />
           Reverse Mode
         </Label>
         <Switch
@@ -163,21 +165,21 @@ export const SettingsPanel = ({
       </div>
 
       {/* Output Size */}
-      <div className="space-y-3">
-        <Label className="flex items-center gap-2">
-          <Square className="w-4 h-4 text-primary" />
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-xs">
+          <Square className="w-3.5 h-3.5 text-muted-foreground" />
           Output Size
         </Label>
         <Select
           value={settings.outputSize}
           onValueChange={(v) => update("outputSize", v)}
         >
-          <SelectTrigger className="bg-background">
+          <SelectTrigger className="h-9 text-xs bg-secondary border-border">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-popover border">
+          <SelectContent className="bg-card border-border">
             {sizeOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+              <SelectItem key={opt.value} value={opt.value} className="text-xs">
                 {opt.label}
               </SelectItem>
             ))}
@@ -186,13 +188,13 @@ export const SettingsPanel = ({
       </div>
 
       {/* Frame Rate */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label className="flex items-center gap-2">
-            <Frame className="w-4 h-4 text-primary" />
+          <Label className="flex items-center gap-2 text-xs">
+            <Frame className="w-3.5 h-3.5 text-muted-foreground" />
             Frame Rate
           </Label>
-          <span className="text-sm text-muted-foreground">{settings.frameRate} fps</span>
+          <span className="text-xs text-muted-foreground font-medium">{settings.frameRate} fps</span>
         </div>
         <Slider
           value={[settings.frameRate]}
@@ -200,25 +202,26 @@ export const SettingsPanel = ({
           min={10}
           max={30}
           step={1}
+          className="py-1"
         />
       </div>
 
       {/* Quality */}
-      <div className="space-y-3">
-        <Label className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-primary" />
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-xs">
+          <Settings2 className="w-3.5 h-3.5 text-muted-foreground" />
           Quality
         </Label>
         <Select
           value={settings.quality}
           onValueChange={(v) => update("quality", v)}
         >
-          <SelectTrigger className="bg-background">
+          <SelectTrigger className="h-9 text-xs bg-secondary border-border">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-popover border">
+          <SelectContent className="bg-card border-border">
             {qualityOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+              <SelectItem key={opt.value} value={opt.value} className="text-xs">
                 {opt.label}
               </SelectItem>
             ))}
@@ -227,21 +230,21 @@ export const SettingsPanel = ({
       </div>
 
       {/* Filter */}
-      <div className="space-y-3">
-        <Label className="flex items-center gap-2">
-          <Palette className="w-4 h-4 text-primary" />
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-xs">
+          <Palette className="w-3.5 h-3.5 text-muted-foreground" />
           Filter
         </Label>
         <Select
           value={settings.filter}
           onValueChange={(v) => update("filter", v)}
         >
-          <SelectTrigger className="bg-background">
+          <SelectTrigger className="h-9 text-xs bg-secondary border-border">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-popover border">
+          <SelectContent className="bg-card border-border">
             {filterOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+              <SelectItem key={opt.value} value={opt.value} className="text-xs">
                 {opt.label}
               </SelectItem>
             ))}

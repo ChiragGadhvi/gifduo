@@ -94,7 +94,7 @@ export const ImageUploader = ({
   }, [images, onImagesChange]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <AnimatePresence mode="wait">
         {images.length < maxImages && (
           <motion.div
@@ -102,10 +102,10 @@ export const ImageUploader = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             className={cn(
-              "relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 cursor-pointer",
+              "relative border border-dashed rounded-xl p-10 transition-all duration-300 cursor-pointer",
               isDragging
-                ? "border-primary bg-primary/10 shadow-glow"
-                : "border-border hover:border-primary/50 hover:bg-muted/50"
+                ? "border-foreground bg-secondary/50"
+                : "border-border hover:border-foreground/50 hover:bg-secondary/30"
             )}
             onDragEnter={handleDragIn}
             onDragLeave={handleDragOut}
@@ -120,11 +120,14 @@ export const ImageUploader = ({
               onChange={handleFileSelect}
             />
             <div className="flex flex-col items-center gap-4 text-center">
-              <div className="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center">
-                <Upload className="w-8 h-8 text-primary-foreground" />
-              </div>
+              <motion.div 
+                className="w-14 h-14 rounded-xl bg-secondary border border-border flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
+              >
+                <Upload className="w-6 h-6 text-foreground" />
+              </motion.div>
               <div>
-                <p className="text-lg font-semibold">
+                <p className="text-base font-display font-semibold text-foreground">
                   {images.length === 0
                     ? "Drop your images here"
                     : `Add ${maxImages - images.length} more image${maxImages - images.length > 1 ? "s" : ""}`}
@@ -150,20 +153,22 @@ export const ImageUploader = ({
                 layout
                 className="relative group"
               >
-                <div className="w-32 h-32 rounded-xl overflow-hidden shadow-card border-2 border-border">
+                <div className="w-28 h-28 rounded-lg overflow-hidden border border-border bg-secondary">
                   <img
                     src={image}
                     alt={`Upload ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => removeImage(index)}
-                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <X className="w-4 h-4" />
-                </button>
-                <div className="absolute bottom-2 left-2 px-2 py-1 rounded-md bg-background/80 backdrop-blur-sm text-xs font-medium">
+                  <X className="w-3 h-3" />
+                </motion.button>
+                <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-background/80 backdrop-blur-sm text-xs font-medium font-display">
                   {index + 1}
                 </div>
               </motion.div>
@@ -174,11 +179,13 @@ export const ImageUploader = ({
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={swapImages}
-              className="w-10 h-10 rounded-full bg-muted hover:bg-primary/10 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-full bg-secondary border border-border hover:bg-accent flex items-center justify-center transition-colors"
               title="Swap images"
             >
-              <ArrowLeftRight className="w-5 h-5 text-primary" />
+              <ArrowLeftRight className="w-4 h-4 text-foreground" />
             </motion.button>
           )}
         </div>
@@ -189,9 +196,9 @@ export const ImageUploader = ({
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="w-24 h-24 rounded-xl border-2 border-dashed border-border flex items-center justify-center"
+              className="w-20 h-20 rounded-lg border border-dashed border-border flex items-center justify-center"
             >
-              <ImageIcon className="w-8 h-8 text-muted-foreground/50" />
+              <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
             </div>
           ))}
         </div>

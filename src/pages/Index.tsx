@@ -55,26 +55,29 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ duration: 0.5 }}
-            className="py-16 px-4"
+            className="py-20 px-4"
           >
             <div className="max-w-7xl mx-auto">
               {/* Step indicators */}
-              <div className="flex items-center justify-center gap-4 mb-12">
+              <div className="flex items-center justify-center gap-6 mb-16">
                 {[
                   { num: 1, label: "Upload", active: true },
                   { num: 2, label: "Animate", active: images.length >= 2 },
                   { num: 3, label: "Download", active: images.length >= 2 },
-                ].map((step) => (
-                  <div key={step.num} className="flex items-center gap-2">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                ].map((step, idx) => (
+                  <div key={step.num} className="flex items-center gap-3">
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-display font-bold border transition-colors ${
                         step.active
-                          ? "gradient-bg text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
+                          ? "bg-foreground text-background border-foreground"
+                          : "bg-transparent text-muted-foreground border-border"
                       }`}
                     >
                       {step.num}
-                    </div>
+                    </motion.div>
                     <span
                       className={`text-sm font-medium ${
                         step.active ? "text-foreground" : "text-muted-foreground"
@@ -83,18 +86,18 @@ const Index = () => {
                       {step.label}
                     </span>
                     {step.num < 3 && (
-                      <div className="w-12 h-0.5 bg-border mx-2" />
+                      <div className="w-16 h-px bg-border ml-2" />
                     )}
                   </div>
                 ))}
               </div>
 
-              <div className="grid lg:grid-cols-[1fr_400px_320px] gap-8">
+              <div className="grid lg:grid-cols-[1fr_380px_280px] gap-6">
                 {/* Left - Upload */}
-                <div className="space-y-8">
-                  <div className="p-6 bg-card rounded-2xl border shadow-card">
-                    <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full gradient-bg text-primary-foreground text-xs flex items-center justify-center font-bold">
+                <div className="space-y-6">
+                  <div className="p-6 bg-card rounded-xl border border-border">
+                    <h2 className="text-base font-display font-semibold mb-5 flex items-center gap-3">
+                      <span className="w-6 h-6 rounded-full bg-foreground text-background text-xs flex items-center justify-center font-bold">
                         1
                       </span>
                       Upload Images
@@ -110,10 +113,10 @@ const Index = () => {
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="p-6 bg-card rounded-2xl border shadow-card"
+                      className="p-6 bg-card rounded-xl border border-border"
                     >
-                      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                        <span className="w-6 h-6 rounded-full gradient-bg text-primary-foreground text-xs flex items-center justify-center font-bold">
+                      <h2 className="text-base font-display font-semibold mb-5 flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-full bg-foreground text-background text-xs flex items-center justify-center font-bold">
                           2
                         </span>
                         Choose Animation
@@ -127,9 +130,9 @@ const Index = () => {
                 </div>
 
                 {/* Center - Preview */}
-                <div className="space-y-6">
-                  <div className="p-6 bg-card rounded-2xl border shadow-card h-full flex flex-col">
-                    <h2 className="text-xl font-semibold mb-6 text-center">Preview</h2>
+                <div className="space-y-5">
+                  <div className="p-6 bg-card rounded-xl border border-border h-full flex flex-col">
+                    <h2 className="text-base font-display font-semibold mb-5 text-center">Preview</h2>
                     <div className="flex-1 flex items-center justify-center">
                       <PreviewCanvas
                         images={images}
