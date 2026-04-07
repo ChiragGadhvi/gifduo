@@ -45,13 +45,22 @@ export const ImageUploader = ({
         })
         .slice(0, maxImages - images.length);
 
-      validFiles.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const result = e.target?.result as string;
-          onImagesChange([...images, result].slice(0, maxImages));
-        };
-        reader.readAsDataURL(file);
+      if (validFiles.length === 0) return;
+
+      // Read all files in parallel, then update state once with all results.
+      // (forEach + individual onload callbacks would each close over the stale
+      //  `images` value and only the last callback's call to onImagesChange wins.)
+      const promises = validFiles.map(
+        (file) =>
+          new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target?.result as string);
+            reader.readAsDataURL(file);
+          })
+      );
+
+      Promise.all(promises).then((results) => {
+        onImagesChange([...images, ...results].slice(0, maxImages));
       });
     },
     [images, maxImages, onImagesChange]
